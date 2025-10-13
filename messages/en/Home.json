@@ -1,0 +1,85 @@
+{
+  "kicker": "New: Dealer dashboards & instant chat",
+  "headline": {
+    "p1": "Find your next car with",
+    "bold": "confidence",
+    "p2": ""
+  },
+  "sub": "Premium listings, verified sellers, and powerful search — all in a lightning-fast marketplace built with Next.js.",
+  "nav": { "browse": "Browse", "sell": "Sell" },
+  "search": {
+    "label": "What are you looking for?",
+    "placeholder": "e.g. BMW 3 Series",
+    "make": "Make",
+    "any": "Any",
+    "maxPrice": "Max price (€)",
+    "cta": "Search cars"
+  },
+  "badges": {
+    "verified": "Verified sellers",
+    "inspected": "Inspected vehicles",
+    "rating": "4.9★ average",
+    "count": "14k+ cars listed"
+  },
+  "spotlight": { "title": "Today’s spotlight", "view": "View" },
+  "featured": {
+    "kicker": "Featured",
+    "title": "Hand-picked listings",
+    "sub": "Carefully curated cars with great specs and transparent history.",
+    "badge": "Featured",
+    "vat": "incl. VAT",
+    "viewDetails": "View details"
+  },
+  "browseAll": "Browse all cars",
+  "how": {
+    "kicker": "Simple",
+    "title": "How it works",
+    "sub": "From discovery to handshake in three clear steps.",
+    "step1": "Search & filter",
+    "desc1": "Use powerful filters to find the exact car you want.",
+    "step2": "Chat & inspect",
+    "desc2": "Message sellers, review reports, and schedule viewings.",
+    "step3": "Secure purchase",
+    "desc3": "Optional escrow & digital paperwork for peace of mind."
+  },
+  "testimonials": {
+    "kicker": "Loved by buyers",
+    "title": "Real stories, real savings"
+  },
+  "cta": {
+    "title": "Ready to sell your car?",
+    "sub": "List in minutes. Reach serious buyers. Get paid securely.",
+    "primary": "Create a listing",
+    "secondary": "Talk to sales",
+    "guideLabel": "Get seller guide",
+    "sendGuide": "Send me the PDF"
+  },
+  "footer": {
+    "tagline": "A modern used-car marketplace with trust at its core.",
+    "marketplace": {
+      "title": "Marketplace",
+      "browse": "Browse cars",
+      "sell": "Sell your car",
+      "pricing": "Pricing",
+      "dealers": "Dealers"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "careers": "Careers",
+      "blog": "Blog",
+      "support": "Support"
+    },
+    "loop": {
+      "title": "Stay in the loop",
+      "email": "Email address",
+      "subscribe": "Subscribe",
+      "terms": "By subscribing, you agree to our Privacy Policy."
+    },
+    "legal": {
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "cookies": "Cookies"
+    }
+  }
+}

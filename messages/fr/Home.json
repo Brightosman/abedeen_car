@@ -1,0 +1,85 @@
+{
+  "kicker": "Nouveau : tableaux de bord pro & chat instantané",
+  "headline": {
+    "p1": "Trouvez votre prochaine voiture en toute",
+    "bold": "confiance",
+    "p2": ""
+  },
+  "sub": "Annonces premium, vendeurs vérifiés et recherche puissante — le tout dans une marketplace ultra-rapide.",
+  "nav": { "browse": "Parcourir", "sell": "Vendre" },
+  "search": {
+    "label": "Que recherchez-vous ?",
+    "placeholder": "ex. BMW Série 3",
+    "make": "Marque",
+    "any": "Toutes",
+    "maxPrice": "Prix max (€)",
+    "cta": "Rechercher"
+  },
+  "badges": {
+    "verified": "Vendeurs vérifiés",
+    "inspected": "Véhicules inspectés",
+    "rating": "Moyenne 4,9★",
+    "count": "14k+ voitures en ligne"
+  },
+  "spotlight": { "title": "À l’honneur aujourd’hui", "view": "Voir" },
+  "featured": {
+    "kicker": "À la une",
+    "title": "Annonces sélectionnées",
+    "sub": "Des voitures triées sur le volet avec un historique transparent.",
+    "badge": "À la une",
+    "vat": "TTC",
+    "viewDetails": "Voir les détails"
+  },
+  "browseAll": "Voir toutes les voitures",
+  "how": {
+    "kicker": "Simple",
+    "title": "Comment ça marche",
+    "sub": "De la découverte à l’accord en trois étapes.",
+    "step1": "Rechercher et filtrer",
+    "desc1": "Utilisez des filtres puissants pour trouver la voiture idéale.",
+    "step2": "Discuter et inspecter",
+    "desc2": "Échangez avec le vendeur, consultez les rapports et planifiez une visite.",
+    "step3": "Achat sécurisé",
+    "desc3": "Escrow optionnel et documents numériques pour plus de sérénité."
+  },
+  "testimonials": {
+    "kicker": "Plébiscité par les acheteurs",
+    "title": "Des histoires vraies, de vraies économies"
+  },
+  "cta": {
+    "title": "Prêt(e) à vendre votre voiture ?",
+    "sub": "Publiez en quelques minutes. Touchez des acheteurs sérieux. Paiement sécurisé.",
+    "primary": "Créer une annonce",
+    "secondary": "Parler à l’équipe",
+    "guideLabel": "Recevoir le guide vendeur",
+    "sendGuide": "Envoyez-moi le PDF"
+  },
+  "footer": {
+    "tagline": "Une marketplace auto moderne, fondée sur la confiance.",
+    "marketplace": {
+      "title": "Marketplace",
+      "browse": "Parcourir les voitures",
+      "sell": "Vendre votre voiture",
+      "pricing": "Tarifs",
+      "dealers": "Concessionnaires"
+    },
+    "company": {
+      "title": "Entreprise",
+      "about": "À propos",
+      "careers": "Carrières",
+      "blog": "Blog",
+      "support": "Support"
+    },
+    "loop": {
+      "title": "Restez informé(e)",
+      "email": "Adresse e-mail",
+      "subscribe": "S’abonner",
+      "terms": "En vous abonnant, vous acceptez notre politique de confidentialité."
+    },
+    "legal": {
+      "terms": "Conditions",
+      "privacy": "Confidentialité",
+      "cookies": "Cookies"
+    }
+  }
+}
