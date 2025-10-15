@@ -130,12 +130,11 @@ export default function HomePage() {
   const [price, setPrice] = useState("");
 
   function submitSearch(e: React.FormEvent) {
-    e.preventDefault();
-    const params = new URLSearchParams({q, make, maxPrice: price || ""}).toString();
-    // Build a locale-aware href that preserves the current locale
-    const href = getPathname({href: "/marketplace"}) + "?" + params;
-    router.push(href);
-  }
+  e.preventDefault();
+  const qs = new URLSearchParams({ q, make, maxPrice: price || "" }).toString();
+  // locale-aware router supports plain string; it will prefix current locale
+  router.push(`/marketplace?${qs}`);
+}
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -170,7 +169,17 @@ export default function HomePage() {
                 <Sparkles className="h-3.5 w-3.5" /> {t("kicker")}
               </div> */}
 
-              <LightSweepBadge icon={<Sparkles className="h-3.5 w-3.5" />} speedSec={6} ring={2}>
+              {/* <LightSweepBadge icon={<Sparkles className="h-3.5 w-3.5" />} speedSec={6} ring={2}>
+                {t("kicker")}
+              </LightSweepBadge> */}
+
+              <LightSweepBadge
+                icon={<Sparkles className="h-3.5 w-3.5" />}
+                speedSec={7}
+                ring={3}
+                arcDeg={80}
+                // color="hsl(45 90% 55%)"
+              >
                 {t("kicker")}
               </LightSweepBadge>
 

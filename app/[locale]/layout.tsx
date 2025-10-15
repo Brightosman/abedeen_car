@@ -1,4 +1,4 @@
-// app/[locale]/layout.tsx  ← REPLACE ENTIRE FILE
+// app/[locale]/layout.tsx  ← DROP-IN REPLACE
 import type {Metadata} from "next";
 import {NextIntlClientProvider} from "next-intl";
 import {ThemeProvider} from "@/components/theme-provider";
@@ -6,30 +6,29 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AutoCart",
-  description: "Find your next car with confidence"
+  description: "Find your next car with confidence",
+  alternates: {languages: {en: "/en", fr: "/fr"}},
 };
-
-type Params = {locale: "en" | "fr"};
 
 export default async function LocaleLayout({
   children,
-  // In Next 15, params is a Promise in RSC
-  params
+  params,
 }: {
   children: React.ReactNode;
-  params: Promise<Params>;
+  // In Next 15, layouts receive params as a Promise in RSC
+  params: Promise<{ locale: string }>;
 }) {
-  const {locale} = await params;
+  const {locale: raw} = await params;
+  const locale = raw === "en" || raw === "fr" ? raw : "fr";
 
-  // Load the messages explicitly from the URL segment
+  // URL-driven i18n: load messages by segment
   const Home = (await import(`../../messages/${locale}/Home.json`)).default;
-  const messages = {Home};
+  const Marketplace = (await import(`../../messages/${locale}/Marketplace.json`)).default;
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <head />
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={{Home, Marketplace}}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             {children}
           </ThemeProvider>
