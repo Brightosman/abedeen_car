@@ -26,7 +26,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Badge} from "@/components/ui/badge";
 import {Separator} from "@/components/ui/separator";
-
+import LightSweepBadge from "@/components/ui/LightSweepBadge";
 
 /** ---------- Helpers ---------- */
 function ThemeToggle() {
@@ -166,9 +166,13 @@ export default function HomePage() {
         <Container>
           <div className="grid items-center gap-8 py-16 md:grid-cols-2 md:py-24">
             <motion.div initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{duration: 0.5}}>
-              <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
+              {/* <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">
                 <Sparkles className="h-3.5 w-3.5" /> {t("kicker")}
-              </div>
+              </div> */}
+
+              <LightSweepBadge icon={<Sparkles className="h-3.5 w-3.5" />} speedSec={6} ring={2}>
+                {t("kicker")}
+              </LightSweepBadge>
 
               {/* Headline without t.rich */}
               <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">
