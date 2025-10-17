@@ -1,8 +1,10 @@
-// app/[locale]/layout.tsx
+// app/[locale]/layout.tsx — DROP IN
 import type {Metadata} from "next";
 import {NextIntlClientProvider} from "next-intl";
+import {getLocale, getMessages} from "next-intl/server";
 import {ThemeProvider} from "@/components/theme-provider";
-import Header from "@/components/general/Header";   // your chosen path
+import TopBar from "@/components/general/TopBar";
+import Header from "@/components/general/Header";
 import Footer from "@/components/general/Footer";
 import "./globals.css";
 
@@ -13,27 +15,20 @@ export const metadata: Metadata = {
 };
 
 export default async function LocaleLayout({
-  children,
-  params
+  children
 }: {
   children: React.ReactNode;
-  // IMPORTANT: keep this as string (not union) to satisfy Next’s LayoutConfig constraint
-  params: Promise<{ locale: string }>;
 }) {
-  const {locale: raw} = await params;
-  // runtime guard + default
-  const locale = raw === "en" || raw === "fr" ? raw : "fr";
-
-  // Load the namespaces you need across the app
-  const Home = (await import(`../../messages/${locale}/Home.json`)).default;
-  const Marketplace = (await import(`../../messages/${locale}/Marketplace.json`).catch(() => ({default: {}}))).default;
-  const Listing = (await import(`../../messages/${locale}/Listing.json`).catch(() => ({default: {}}))).default;
+  // next-intl resolves the locale from the [locale] segment + middleware
+  const locale = await getLocale(); // "en" | "fr"
+  const messages = await getMessages(); // includes all namespaces exported by i18n/request.ts
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <NextIntlClientProvider locale={locale} messages={{Home, Marketplace, Listing}}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <TopBar phone={process.env.NEXT_PUBLIC_CONTACT_PHONE} />
             <Header />
             {children}
             <Footer />
