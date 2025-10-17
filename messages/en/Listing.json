@@ -1,0 +1,38 @@
+{
+  "seller": "Seller",
+  "location": "Location",
+  "specs": {
+    "heading": "Specifications",
+    "condition": "Condition",
+    "origin": "Origin",
+    "category": "Category",
+    "series": "Series",
+    "equipmentLine": "Equipment line",
+    "displacement": "Displacement",
+    "power": "Power",
+    "driveType": "Drive type",
+    "fuelType": "Fuel type",
+    "fuelConsumption": "Fuel consumption (combined)",
+    "co2": "CO₂ emissions (combined)",
+    "seats": "Seats",
+    "doors": "Doors",
+    "gearbox": "Gearbox",
+    "envSticker": "Environmental sticker",
+    "firstRegistration": "First registration",
+    "ownersCount": "Number of owners",
+    "ac": "Air conditioning",
+    "colorManufacturer": "Color (Manufacturer)",
+    "color": "Color",
+    "interior": "Interior",
+    "trailerBraked": "Trailer load (braked)",
+    "trailerUnbraked": "Trailer load (unbraked)",
+    "weight": "Weight",
+    "cylinders": "Cylinders",
+    "tankSize": "Tank size"
+  },
+  "groups": {
+    "parkingAid": "Parking aid",
+    "airbags": "Airbags",
+    "equipment": "Equipment"
+  }
+}

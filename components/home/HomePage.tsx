@@ -307,7 +307,7 @@ export default function HomePage() {
                     </div>
                     <Link href={`/listing/${car.id}`} className="block">
                       <Button className="mt-3 w-full" variant="outline">
-                        {t("featured.viewDetails" /* or t("view") in Marketplace */)}
+                        {t("featured.viewDetails")}
                       </Button>
                     </Link>
                   </CardContent>

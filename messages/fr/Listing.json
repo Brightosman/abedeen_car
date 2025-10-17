@@ -1,0 +1,39 @@
+
+{
+  "seller": "Vendeur",
+  "location": "Localisation",
+  "specs": {
+    "heading": "Caractéristiques",
+    "condition": "État",
+    "origin": "Origine",
+    "category": "Catégorie",
+    "series": "Série",
+    "equipmentLine": "Finition",
+    "displacement": "Cylindrée",
+    "power": "Puissance",
+    "driveType": "Type de motorisation",
+    "fuelType": "Carburant",
+    "fuelConsumption": "Conso. carburant (mixte)",
+    "co2": "Émissions CO₂ (mixte)",
+    "seats": "Places",
+    "doors": "Portes",
+    "gearbox": "Boîte de vitesses",
+    "envSticker": "Vignette environnement",
+    "firstRegistration": "1ère immatriculation",
+    "ownersCount": "Nb. de propriétaires",
+    "ac": "Climatisation",
+    "colorManufacturer": "Couleur (Constructeur)",
+    "color": "Couleur",
+    "interior": "Intérieur",
+    "trailerBraked": "PTAC remorque freinée",
+    "trailerUnbraked": "PTAC remorque non freinée",
+    "weight": "Poids",
+    "cylinders": "Cylindres",
+    "tankSize": "Capacité du réservoir"
+  },
+  "groups": {
+    "parkingAid": "Aide au stationnement",
+    "airbags": "Airbags",
+    "equipment": "Équipements"
+  }
+}
