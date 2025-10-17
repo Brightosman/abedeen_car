@@ -14,5 +14,16 @@
   "results": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
   "disclaimer": "Données de démonstration • Prix indicatifs",
   "vat": "TTC",
-  "view": "Voir les détails"
+  "view": "Voir les détails",
+
+
+  "heading": "Marketplace",
+  "sub": "Parcourez les nouvelles annonces de vendeurs de confiance.",
+  "loadMore": "Charger plus",
+  "loading": "Chargement…",
+  "noMore": "Plus d’annonces",
+  "empty": "Aucune voiture trouvée pour le moment.",
+  "errorLoad": "Échec du chargement des annonces. Réessayez.",
+  "viewDetails": "Voir les détails"
+  
 }

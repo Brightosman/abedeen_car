@@ -8,6 +8,8 @@ export default getRequestConfig(async ({locale}) => {
   console.log("[next-intl] activeLocale =", activeLocale);
 
   const Home = (await import(`../messages/${activeLocale}/Home.json`)).default;
-
-  return {locale: activeLocale, messages: {Home}};
+  const Marketplace = (await import(`../messages/${activeLocale}/Marketplace.json`).catch(() => ({default: {}}))).default;
+  const Listing     = (await import(`../messages/${activeLocale}/Listing.json`).catch(() => ({default: {}}))).default;
+  
+  return {locale: activeLocale, messages: {Home, Marketplace, Listing}};
 });

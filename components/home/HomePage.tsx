@@ -317,9 +317,11 @@ export default function HomePage() {
           </div>
 
           <div className="mt-8 flex justify-center">
-            <Button size="lg">
-              {t("browseAll")} <ChevronRight className="ml-1 h-5 w-5" />
-            </Button>
+            <Link href={`/marketplace`} className="block">
+              <Button size="lg">
+                {t("browseAll")} <ChevronRight className="ml-1 h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </Container>
       </section>

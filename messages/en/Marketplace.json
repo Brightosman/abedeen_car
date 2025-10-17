@@ -14,5 +14,15 @@
   "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
   "disclaimer": "Demo data • Prices are illustrative",
   "vat": "incl. VAT",
-  "view": "View details"
+  "view": "View details",
+
+
+  "heading": "Marketplace",
+  "sub": "Browse fresh listings from trusted sellers.",
+  "loadMore": "Load more",
+  "loading": "Loading…",
+  "noMore": "No more listings",
+  "empty": "No cars found yet.",
+  "errorLoad": "Failed to load listings. Please try again.",
+  "viewDetails": "View details"
 }
