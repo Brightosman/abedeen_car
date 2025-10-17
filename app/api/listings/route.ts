@@ -2,123 +2,206 @@
 import {NextResponse} from "next/server";
 import {prisma} from "@/lib/db";
 
-export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-// GET /api/listings?q=&make=&maxPrice=&take=&cursor=&features=ABS,Apple%20CarPlay
+/* -------------------- Types -------------------- */
+
+type CreateListingBody = {
+  title: string;
+  make: string;
+  model: string;
+  year: number;
+  price: number;
+  km: number;
+  city?: string | null;
+  coverUrl?: string | null;
+  description?: string | null;
+  images?: string[];
+  spec?: Partial<SpecInput>;
+};
+
+type SpecInput = {
+  condition?: string | null;
+  accidentFree?: boolean | null;
+  origin?: string | null;
+  category?: string | null;
+  series?: string | null;
+  equipmentLine?: string | null;
+  displacementCc?: number | null;
+  powerKw?: number | null;
+  powerHp?: number | null;
+  driveType?: string | null;
+  fuelType?: string | null;
+  energyConsumptionCombinedLPer100km?: number | null;
+  fuelConsumptionCombinedLPer100km?: number | null;
+  co2CombinedGPerKm?: number | null;
+  seats?: number | null;
+  doors?: number | null;
+  gearbox?: string | null;
+  envSticker?: string | null;
+  firstRegistration?: string | Date | null;
+  ownersCount?: number | null;
+  hu?: string | null;
+  airConditioning?: string | null;
+  // scalar lists
+  parkingAid?: string[] | null;
+  airbags?: string[] | null;
+  equipment?: string[] | null;
+  colorManufacturer?: string | null;
+  color?: string | null;
+  interior?: string | null;
+  trailerBrakedKg?: number | null;
+  trailerUnbrakedKg?: number | null;
+  weightKg?: number | null;
+  cylinders?: number | null;
+  tankSizeLiters?: number | null;
+};
+
+/* -------------------- Utils -------------------- */
+
+// remove only undefined (keep nulls if explicitly set)
+function prune<T extends Record<string, unknown>>(obj: T): T {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v !== undefined) out[k] = v;
+  }
+  return out as T;
+}
+
+/**
+ * Normalize SpecInput to a shape Prisma will accept for create():
+ * - scalar lists become string[] | undefined (never null)
+ * - firstRegistration is parsed to Date | null
+ * - undefined keys are removed; nulls are preserved where valid
+ */
+function normalizeSpec(input?: Partial<SpecInput>) {
+  if (!input) return {};
+
+  // Pull out fields that need special handling to avoid spreading their nullable types
+  const {parkingAid, airbags, equipment, firstRegistration, ...rest} = input;
+
+  // Helper: unknown/nullable -> string[] | undefined
+  const toArray = (v?: unknown): string[] | undefined => {
+    if (v == null) return undefined; // never return null for Prisma scalar lists
+    const arr = Array.isArray(v) ? v : [v];
+    const normalized = arr.map(String).filter(Boolean);
+    return normalized.length ? normalized : undefined;
+    };
+
+  // Build output with explicit, compatible types
+  const out: Partial<
+    Omit<SpecInput, "parkingAid" | "airbags" | "equipment" | "firstRegistration">
+  > & {
+    parkingAid?: string[];
+    airbags?: string[];
+    equipment?: string[];
+    firstRegistration?: Date | null;
+  } = {...rest};
+
+  // Date parsing (leave null as null)
+  if (typeof firstRegistration === "string") {
+    const d = new Date(firstRegistration);
+    out.firstRegistration = Number.isNaN(d.valueOf()) ? null : d;
+  } else if (firstRegistration instanceof Date || firstRegistration === null) {
+    out.firstRegistration = firstRegistration;
+  }
+
+  // Scalar lists as plain string[] (never null)
+  out.parkingAid  = toArray(parkingAid);
+  out.airbags     = toArray(airbags);
+  out.equipment   = toArray(equipment);
+
+  // Remove only undefined keys; keep nulls when explicitly present
+  return prune(out);
+}
+
+/* -------------------- Handlers -------------------- */
+
+// GET /api/listings?take=20&skip=0
 export async function GET(req: Request) {
-  const {searchParams} = new URL(req.url);
-  const q         = searchParams.get("q") || "";
-  const make      = searchParams.get("make") || "";
-  const maxPrice  = parseInt(searchParams.get("maxPrice") || "", 10) || null;
-  const take      = Math.min(Math.max(parseInt(searchParams.get("take") || "12", 10), 1), 48);
-  const cursor    = searchParams.get("cursor") || undefined;
-  const features  = (searchParams.get("features") || "")
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean);
+  try {
+    const url = new URL(req.url);
+    const take = Math.min(Number(url.searchParams.get("take") ?? 20), 50);
+    const skip = Number(url.searchParams.get("skip") ?? 0);
 
-  const where = {
-    AND: [
-      q ? {
-        OR: [
-          {title: {contains: q, mode: "insensitive" as const}},
-          {make:  {contains: q, mode: "insensitive" as const}},
-          {model: {contains: q, mode: "insensitive" as const}},
-        ]
-      } : {},
-      make ? { make: {contains: make, mode: "insensitive" as const} } : {},
-      maxPrice ? { price: {lte: maxPrice} } : {},
-      features.length ? { spec: { equipment: { hasEvery: features } } } : {},
-    ]
-  };
+    const [items, total] = await Promise.all([
+      prisma.listing.findMany({
+        take: Number.isFinite(take) ? take : 20,
+        skip: Number.isFinite(skip) ? skip : 0,
+        orderBy: {createdAt: "desc"},
+        include: {images: true, spec: true}
+      }),
+      prisma.listing.count()
+    ]);
 
-  const items = await prisma.listing.findMany({
-    where,
-    include: {
-      images: true,
-      seller: {select: {id: true, name: true}},
-      spec: true,
-    },
-    orderBy: {createdAt: "desc"},
-    take: take + 1,
-    ...(cursor ? {cursor: {id: cursor}, skip: 1} : {})
-  });
-
-  const hasMore = items.length > take;
-  const slice = hasMore ? items.slice(0, -1) : items;
-  const nextCursor = hasMore ? slice[slice.length - 1]?.id : null;
-
-  return NextResponse.json({items: slice, nextCursor});
+    return NextResponse.json({items, total});
+  } catch (e: any) {
+    console.error("GET /api/listings error:", e);
+    return NextResponse.json({error: "Failed to load listings"}, {status: 500});
+  }
 }
 
+// POST /api/listings
 export async function POST(req: Request) {
-  const body = await req.json();
-  const {
-    title, make, model, year, price, km, city, coverUrl, description, sellerEmail = "demo@seller.local",
-    images = [] as string[], spec = {} as any
-  } = body;
+  try {
+    const body = (await req.json()) as CreateListingBody;
 
-  const seller = await prisma.user.upsert({
-    where: {email: sellerEmail},
-    update: {},
-    create: {email: sellerEmail, name: "Demo Seller"},
-  });
+    // Basic validation
+    if (!body?.title || !body?.make || !body?.model) {
+      return NextResponse.json(
+        {error: "Missing required fields (title, make, model)"},
+        {status: 400}
+      );
+    }
+    const year = Number(body.year);
+    const price = Number(body.price);
+    const km = Number(body.km);
+    if (!Number.isFinite(year) || !Number.isFinite(price) || !Number.isFinite(km)) {
+      return NextResponse.json(
+        {error: "Invalid numeric fields (year, price, km)"},
+        {status: 400}
+      );
+    }
 
-  const created = await prisma.listing.create({
-    data: {
-      title, make, model,
-      year: Number(year), price: Number(price), km: Number(km),
-      city, coverUrl, description,
-      sellerId: seller.id,
-      images: {create: images.map((url) => ({url}))},
-      spec: { create: normalizeSpec(spec) },
-    },
-    include: {images: true, seller: {select: {id: true, name: true}}, spec: true},
-  });
+    // Ensure a seller (demo)
+    const seller = await prisma.user.upsert({
+      where: {email: "seed@seller.local"},
+      update: {},
+      create: {email: "seed@seller.local", name: "Seed Seller"}
+    });
 
-  return NextResponse.json(created, {status: 201});
-}
+    // Images
+    const imagesArray: string[] = Array.isArray(body.images)
+      ? body.images.map((u) => String(u))
+      : [];
 
-function normalizeSpec(s: any) {
-  const toInt = (v: any) => (v === undefined || v === null || v === "" ? null : Number.parseInt(v));
-  const toFloat = (v: any) => (v === undefined || v === null || v === "" ? null : Number.parseFloat(v));
-  const toBool = (v: any) => (typeof v === "boolean" ? v : v === "true" ? true : v === "false" ? false : null);
-  const toDate = (v: any) => (v ? new Date(v) : null);
-  const toArr = (v: any) => (Array.isArray(v) ? v.map(String) : typeof v === "string" && v ? v.split(",").map((x) => x.trim()) : []);
+    const listing = await prisma.listing.create({
+      data: {
+        title: body.title,
+        make: body.make,
+        model: body.model,
+        year,
+        price,
+        km,
+        city: body.city ?? null,
+        coverUrl: body.coverUrl ?? null,
+        description: body.description ?? null,
+        sellerId: seller.id,
+        images: imagesArray.length
+          ? {create: imagesArray.map((u: string) => ({url: u}))}
+          : undefined,
+        spec: {create: normalizeSpec(body.spec)}
+      },
+      include: {
+        images: true,
+        seller: {select: {id: true, name: true}},
+        spec: true
+      }
+    });
 
-  return {
-    condition: s.condition ?? null,
-    accidentFree: toBool(s.accidentFree),
-    origin: s.origin ?? null,
-    category: s.category ?? null,
-    series: s.series ?? null,
-    equipmentLine: s.equipmentLine ?? null,
-    driveType: s.driveType ?? null,
-    fuelType: s.fuelType ?? null,
-    displacementCc: toInt(s.displacementCc),
-    powerKw: toInt(s.powerKw),
-    powerHp: toInt(s.powerHp),
-    energyConsumptionCombinedLPer100km: toFloat(s.energyConsumptionCombinedLPer100km),
-    fuelConsumptionCombinedLPer100km: toFloat(s.fuelConsumptionCombinedLPer100km),
-    co2CombinedGPerKm: toInt(s.co2CombinedGPerKm),
-    seats: toInt(s.seats),
-    doors: toInt(s.doors),
-    gearbox: s.gearbox ?? null,
-    envSticker: s.envSticker ?? null,
-    firstRegistration: toDate(s.firstRegistration),
-    ownersCount: toInt(s.ownersCount),
-    hu: s.hu ?? null,
-    airConditioning: s.airConditioning ?? null,
-    parkingAid: toArr(s.parkingAid),
-    airbags: toArr(s.airbags),
-    colorManufacturer: s.colorManufacturer ?? null,
-    color: s.color ?? null,
-    interior: s.interior ?? null,
-    trailerBrakedKg: toInt(s.trailerBrakedKg),
-    trailerUnbrakedKg: toInt(s.trailerUnbrakedKg),
-    weightKg: toInt(s.weightKg),
-    cylinders: toInt(s.cylinders),
-    tankSizeLiters: toInt(s.tankSizeLiters),
-    equipment: toArr(s.equipment),
-  };
+    return NextResponse.json(listing, {status: 201});
+  } catch (e: any) {
+    console.error("POST /api/listings error:", e);
+    return NextResponse.json({error: "Failed to create listing"}, {status: 500});
+  }
 }
