@@ -17,3 +17,5 @@ export default async function Page({
   if (!["en", "fr"].includes(locale)) notFound();
   return <HomePage />;
 }
+
+

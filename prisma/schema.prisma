@@ -1,0 +1,136 @@
+// prisma/schema.prisma  ← DROP IN (replaces your current schema; keep your edits if needed)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // optional
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  listings  Listing[]
+  favorites Favorite[]
+}
+
+model Listing {
+  id          String      @id @default(cuid())
+  title       String
+  make        String
+  model       String
+  year        Int
+  price       Int
+  km          Int
+  city        String?
+  coverUrl    String?
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  seller   User   @relation(fields: [sellerId], references: [id])
+  sellerId String
+
+  images    Image[]
+  favorites Favorite[]
+
+  // New: 1–1 rich specification
+  spec      ListingSpec?
+
+  @@index([price])
+  @@index([year])
+  @@index([make, model])
+  @@index([createdAt])
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  listingId String
+  createdAt DateTime @default(now())
+}
+
+model Favorite {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId String
+
+  @@id([userId, listingId])
+}
+
+/**
+ * Rich per-vehicle specification.
+ * Notes:
+ * - equipment: String[]  (Postgres text[])
+ * - parkingAid, airbags: String[]  (kept separate for clarity)
+ * - Many fields are optional to allow partial entries.
+ */
+model ListingSpec {
+  listingId String  @id
+  listing   Listing @relation(fields: [listingId], references: [id])
+
+  // Condition
+  condition       String?   // e.g. "Used vehicle, accident-free"
+  accidentFree    Boolean?  // redundant with condition, but handy
+  origin          String?   // e.g. "German version"
+
+  // Category / Series
+  category        String?   // e.g. "Convertible/Roadster"
+  series          String?   // e.g. "E-Class Cabrio (BM 238)(09.2017->)"
+  equipmentLine   String?   // e.g. "E200 (238,442)"
+
+  // Powertrain / consumption
+  driveType       String?   // e.g. "combustion engine"
+  fuelType        String?   // e.g. "petrol"
+  displacementCc  Int?      // 1991
+  powerKw         Int?      // 135
+  powerHp         Int?      // 184
+
+  // Consumption / emissions
+  energyConsumptionCombinedLPer100km Float? // 6.2
+  fuelConsumptionCombinedLPer100km   Float? // 6.2
+  co2CombinedGPerKm                  Int?   // 142
+
+  // Body / capacity
+  seats          Int?   // 4
+  doors          Int?   // 2 or 3 (we store numeric)
+  gearbox        String? // "Automatic"
+  envSticker     String? // "4 (Green)"
+  firstRegistration  DateTime? // 2017-10-01
+  ownersCount    Int?   // 3
+  hu             String? // e.g., "New" (German inspection)
+
+  // Comfort / systems (separate arrays)
+  airConditioning   String?     // "2-zone automatic climate control"
+  parkingAid        String[]    // ["Front","Camera","Rear","Self-steering systems"]
+  airbags           String[]    // ["Front","Side","Additional"]
+
+  // Colors / interior
+  colorManufacturer String? // "POLAR WHITE"
+  color             String? // "White Metallic"
+  interior          String? // "Full-grain leather, black"
+
+  // Weights / towing
+  trailerBrakedKg   Int?
+  trailerUnbrakedKg Int?
+  weightKg          Int?
+
+  // Engine specifics
+  cylinders        Int?
+  tankSizeLiters   Int?
+
+  // Big equipment list (flattened)
+  equipment        String[] // text[] of features
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
