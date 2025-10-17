@@ -163,8 +163,8 @@ export default async function Page({
   );
 }
 
-function Spec({label, value}: {label: string; value?: string}) {
-  if (!value) return null;
+function Spec({label, value}: {label: string; value?: string | null}) {
+  if (value == null || value === "") return null; // hide empty/null rows
   return (
     <div>
       <dt className="text-xs uppercase text-muted-foreground">{label}</dt>
